@@ -3,7 +3,7 @@ from recipe_scrapers import scrape_me
 
 from fastapi import FastAPI, Response
 
-app = FastAPI()
+app = FastAPI(redoc_url="/", docs_url=None)
 
 
 @app.get("/{recipe_url:path}")
