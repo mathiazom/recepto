@@ -1,0 +1,8 @@
+name: "recepto"
+services:
+  recepto:
+    image: ghcr.io/mathiazom/recepto:main
+    container_name: recepto
+    restart: unless-stopped
+    ports:
+      - 8000:8000

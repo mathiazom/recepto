@@ -1,0 +1,11 @@
+name: "recepto"
+services:
+  recepto:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+    container_name: recepto
+    command: ["fastapi", "dev", "recepto/main.py", "--host", "0.0.0.0", "--port", "8000"]
+    restart: unless-stopped
+    ports:
+      - 8000:8000
