@@ -1,7 +1,13 @@
 import re
-from recipe_scrapers import scrape_me
+
+import requests
+from recipe_scrapers import scrape_html, __version__ as scraper_version
 
 from fastapi import FastAPI, Response
+
+HEADERS = {
+    "User-Agent": f"Mozilla/5.0 (compatible; Windows NT 10.0; Win64; x64; rv:{scraper_version}) recipe-scrapers/{scraper_version}"
+}
 
 app = FastAPI(redoc_url="/", docs_url=None)
 
@@ -9,7 +15,11 @@ app = FastAPI(redoc_url="/", docs_url=None)
 @app.get("/{recipe_url:path}")
 def process_recipe(recipe_url):
     print(f"Grabbing recipe from {recipe_url}")
-    recipe = scrape_me(recipe_url, wild_mode=True)
+    try:
+        html = requests.get(url=recipe_url, headers=HEADERS).text
+    except Exception as e:
+        raise Exception(f"Failed to retrieve HTML content from {recipe_url}.") from e
+    recipe = scrape_html(html, recipe_url, supported_only=False)
     print(f"Identified recipe for '{recipe.title()}' from {recipe.host()}")
     return Response(content=recipe_as_md(recipe, recipe_url), media_type="text/plain")
 
