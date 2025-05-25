@@ -9,7 +9,7 @@ app = FastAPI(redoc_url="/", docs_url=None)
 @app.get("/{recipe_url:path}")
 def process_recipe(recipe_url):
     print(f"Grabbing recipe from {recipe_url}")
-    recipe = scrape_me(recipe_url)
+    recipe = scrape_me(recipe_url, wild_mode=True)
     print(f"Identified recipe for '{recipe.title()}' from {recipe.host()}")
     return Response(content=recipe_as_md(recipe, recipe_url), media_type="text/plain")
 
