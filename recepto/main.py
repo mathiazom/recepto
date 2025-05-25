@@ -1,15 +1,22 @@
+import os
 import re
+from pathlib import Path
 
 import requests
-from recipe_scrapers import scrape_html, __version__ as scraper_version
-
 from fastapi import FastAPI, Response
+from recipe_scrapers import scrape_html, __version__ as scraper_version
+from starlette.responses import FileResponse
 
 HEADERS = {
     "User-Agent": f"Mozilla/5.0 (compatible; Windows NT 10.0; Win64; x64; rv:{scraper_version}) recipe-scrapers/{scraper_version}"
 }
 
 app = FastAPI(redoc_url="/", docs_url=None)
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return FileResponse(Path(os.path.dirname(os.path.realpath(__file__))) / "favicon.ico")
 
 
 @app.get("/{recipe_url:path}")
