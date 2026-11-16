@@ -1,0 +1,26 @@
+name: Sanity check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  scrape-recipe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build and start image
+        run: |
+          docker build -f docker/Dockerfile -t recepto .
+          docker run -d -p 8000:8000 recepto
+
+      - name: Scrape a recipe
+        run: |
+          curl --fail --silent --show-error --retry 10 --retry-all-errors --retry-delay 1 -o /dev/null \
+            http://localhost:8000/favicon.ico
+          curl --fail --silent --show-error \
+            http://localhost:8000/https://www.bbcgoodfood.com/recipes/easy-pancakes > recipe.md
+          cat recipe.md
+          grep -q '^## Ingredienser' recipe.md

@@ -1,16 +1,10 @@
-[tool.poetry]
+[project]
 name = "recepto"
 version = "0.1.0"
 description = "🧑‍🍳 Convert web recipes to markdown"
-authors = ["Mathias Oterhals Myklebust <mathias@oterbust.no>"]
+authors = [{ name = "Mathias Oterhals Myklebust", email = "mathias@oterbust.no" }]
 readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.10"
-recipe-scrapers = "15.7.1"
-fastapi = {extras = ["standard"], version = "0.115.12"}
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires-python = ">=3.11.5"
+dependencies = [
+    "recipe-scrapers==15.14.0",
+]

@@ -1,23 +1,20 @@
-FROM python:3.10
+FROM ghcr.io/astral-sh/uv:0.8.0 AS uv
+
+FROM python:3.13-slim
 
 WORKDIR /app
 
-ENV POETRY_HOME=/opt/poetry
+ENV PATH="/app/.venv/bin:$PATH" PYTHONUNBUFFERED=1
 
-RUN python3 -m venv $POETRY_HOME
+COPY pyproject.toml uv.lock ./
 
-ENV PATH="$POETRY_HOME/bin:$PATH"
-
-RUN pip install poetry==1.8.3
-
-RUN poetry config virtualenvs.create false
-
-COPY pyproject.toml poetry.lock ./
-
-RUN poetry install --only main --no-root --no-directory
+RUN --mount=from=uv,source=/uv,target=/bin/uv \
+    uv sync --locked --no-dev --no-cache
 
 COPY recepto recepto
 
-RUN poetry install --only main
+USER nobody
 
-CMD ["fastapi", "run", "recepto/main.py", "--host", "0.0.0.0", "--port", "8000"]
+STOPSIGNAL SIGINT
+
+CMD ["python", "recepto/main.py"]
